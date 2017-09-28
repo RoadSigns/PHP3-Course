@@ -21,10 +21,10 @@ dumpr($c->calculatorObject, 0, 0, 0);
 
             <td>
                 <select name="operator">
-                    <option value="add"         <?='' == 'add'      ? 'selected' : '' ?>>&#43;</option><!-- + -->
-                    <option value="subtract"    <?='' == 'subtract' ? 'selected' : '' ?>>&#45;</option><!-- - -->
-                    <option value="divide"      <?='' == 'divide'   ? 'selected' : '' ?>>&#47;</option><!-- / -->
-                    <option value="multiply"    <?='' == 'multiply' ? 'selected' : '' ?>>x</option>
+                    <option value="add"         <?= $c->calculatorObject->operator == 'add'      ? 'selected' : '' ?>>&#43;</option><!-- + -->
+                    <option value="subtract"    <?= $c->calculatorObject->operator == 'subtract' ? 'selected' : '' ?>>&#45;</option><!-- - -->
+                    <option value="divide"      <?= $c->calculatorObject->operator == 'divide'   ? 'selected' : '' ?>>&#47;</option><!-- / -->
+                    <option value="multiply"    <?= $c->calculatorObject->operator == 'multiply' ? 'selected' : '' ?>>x</option>
                 </select>
             </td>
 
