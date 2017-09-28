@@ -20,7 +20,6 @@ class ContactBook
         unset($this->$contact);
     }
 
-
     /*
      *
      * Currently I am unable to turn Objects with Objects within them into JSON using json_encode()
@@ -38,14 +37,17 @@ class ContactBook
 
 class Contact 
 {
+    protected $name;
     protected $fullName;
     protected $dateOfBirth;
     protected $age;
     
     public function __construct($firstName, $surname, $dateOfBirth)
     {
+        $this->name        = $firstName;
         $this->fullName    = $firstName . " " . $surname;
-        $this->dateOfBirth = date("d F Y", strtotime($dateOfBirth));
+        $this->dateOfBirth = date("jS F Y", strtotime($dateOfBirth));
+        $this->age         = (date('Y') - date('Y',strtotime($this->dateOfBirth)));;
     }
 }
 
