@@ -20,8 +20,8 @@ dumpr($postCode);
             </td>
             <td>
                 <select name='type' class='form-control'>
-                    <option <?= $postCode->type == 'JSON' ? 'selected' : '' ?>>JSON</option>
-                    <option <?= $postCode->type == 'XML'  ? 'selected' : '' ?>>XML</option>
+                    <option <?= $postCode->Object->type == 'JSON' ? 'selected' : '' ?>>JSON</option>
+                    <option <?= $postCode->Object->type == 'XML'  ? 'selected' : '' ?>>XML</option>
                 </select>
             </td>
             <td>
