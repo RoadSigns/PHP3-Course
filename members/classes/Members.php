@@ -99,9 +99,29 @@ class Members {
      */
     private function _addMember()
     {
+        $telephone = FILTER_INPUT(INPUT_POST, 'telephone', FILTER_SANITIZE_STRING);
+        $firstname = FILTER_INPUT(INPUT_POST, 'fName',     FILTER_SANITIZE_STRING);
+        $surname   = FILTER_INPUT(INPUT_POST, 'sName',     FILTER_SANITIZE_STRING);
+        $email     = FILTER_INPUT(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL );
         
-        // TO DO
+        $username = $surname . "" . substr($firstname, 1);
         
+        $table = 'members';
+        $columns = array (
+            "memberID"  => "",
+            "uName"     => $username,
+            "email"     => $email,
+            "fName"     => $firstname,
+            "sName"     => $surname,
+            "telephone" => $telephone
+        );
+        $result = $this->link->insert($table, $columns);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
     
     
