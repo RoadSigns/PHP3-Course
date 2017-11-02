@@ -12,24 +12,23 @@
  * set error reporting level
  * set error display to 'on'
  */
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
-
-
-/**
- * Define DB parameters as CONSTANTS
- * 
- */
-//define('DBHOST','');
-//define('DBUSER','');
-//define('DBPASS','');
-//define('DBNAME','');
-
-
+define('DBHOST','localhost');
+define('DBUSER','php_user01');
+define('DBPASS','password');
+define('DBNAME','php_db01');
 
 /**
  * Include all required Classes
  * or an Autoloader
  */
+require 'classes/Url.php';
+require 'classes/MyPDO.php';
+require 'classes/FormValidator.php';
+require 'classes/FileUpload.php';
+require 'classes/Members.php';
 
 
 
@@ -39,7 +38,8 @@
  * ---------------------------------------------------------
  * Errors : $errors
  */
-$members = new Members;
+$link =  new MyPDO();
+$members = new Members($link);
 
 $errors = $members->getErrors();
 
@@ -53,7 +53,7 @@ $errors = $members->getErrors();
  * Segment 1 : $action
  * Segment 2 : $option
  */
-$url = new Url('/path/to/your/project/');
+$url = new Url('/webstudent/sem6zl/php3/members/');
 $action = $url->getSegment(1);
 $option = $url->getSegment(2);
 

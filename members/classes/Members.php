@@ -10,17 +10,18 @@
  * @requires    FileUpload
  * 
  */
-
 class Members {
     
     private $errors = array();
     
-    private $projectPath = '/xx/xx/xx/xx/';
-    private $uploadPath  = '/xx/xx/xx/';
+    private $link;
+    private $projectPath = '/webstudent/sem6zl/php3/members/';
+    private $uploadPath  = '/webstudent/sem6zl/php3/members/images';
     
-    public function __construct()
+    public function __construct($link)
     {
 
+        $this->link = $link;
         if(isset($_POST['frmName']) && $_POST['frmName']=='add'){
             $this->_addMember();
         }
@@ -51,7 +52,14 @@ class Members {
     public function getMembers()
     {
 
-        // TO DO
+        $sql  = "SELECT * FROM members";
+            
+        $result = $this->link->query($sql)->fetchAll();
+        if ($result) {
+            return $result;
+        } else {
+            return $this->link->getError();
+        }
         
     }
     
@@ -63,9 +71,14 @@ class Members {
      */
     public function getMember($memberID)
     {
-
-        // TO DO
+        $sql = " SELECT * FROM members WHERE memberid = :id";
         
+        $result = $this->link->query($sql)->bind(':id', $memberID)->fetchRow();
+        if ($result) {
+            return $result;
+        } else {
+            return false;
+        }
     }
     
 
