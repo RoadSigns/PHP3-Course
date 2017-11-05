@@ -11,21 +11,24 @@
  * 
  */
 class Members {
-    
+
     private $errors = array();
-    
+
     private $link;
+    private $formVal;
+
     private $projectPath = '/webstudent/sem6zl/php3/members/';
     private $uploadPath  = '/webstudent/sem6zl/php3/members/images';
-    
-    public function __construct($link)
-    {
 
-        $this->link = $link;
+    public function __construct($link, $formVal)
+    {
+        $this->link       = $link;
+        $this->formVal    = $formVal;
+
         if(isset($_POST['frmName']) && $_POST['frmName']=='add'){
             $this->_addMember();
         }
-        
+
         if(isset($_POST['frmName']) && $_POST['frmName']=='edit'){
             $this->_updateMember();
         }
@@ -33,18 +36,16 @@ class Members {
         if(isset($_GET['frmName']) && $_GET['frmName']=='delete'){
             $this->_deleteMember();
         }
-        
     }
-    
-    
+
+
     /*
      * Check/Return error array
      */
     public function getErrors(){
         return count($this->errors) ? $this->errors : false;
     }
-    
-    
+
     /**
      * 
      * @return type
@@ -62,8 +63,7 @@ class Members {
         }
         
     }
-    
-    
+
     /**
      * 
      * @param type $memberID
@@ -77,10 +77,9 @@ class Members {
         if ($result) {
             return $result;
         } else {
-            return false;
+            $this->getErrors();
         }
     }
-    
 
     /**
      * 
@@ -90,62 +89,94 @@ class Members {
         header("Location: ".$this->projectPath);
         exit;
     }
-    
-    
-    
-    
+
     /**
      * 
      */
     private function _addMember()
     {
-        $telephone = FILTER_INPUT(INPUT_POST, 'telephone', FILTER_SANITIZE_STRING);
-        $firstname = FILTER_INPUT(INPUT_POST, 'fName',     FILTER_SANITIZE_STRING);
-        $surname   = FILTER_INPUT(INPUT_POST, 'sName',     FILTER_SANITIZE_STRING);
-        $email     = FILTER_INPUT(INPUT_POST, 'email',     FILTER_SANITIZE_EMAIL );
-        
-        $username = $surname . "" . substr($firstname, 1);
-        
+        $this->formVal->setMethod('POST');
+        $this->formVal->registerFields();
+
+        $this->formVal->validate('telephone')->clean()->isRequired();
+        $this->formVal->validate('fName')->clean()->isRequired();
+        $this->formVal->validate('sName')->clean()->isRequired();
+        $this->formVal->validate('email')->clean()->isRequired()->isEmail();
+
+        $fields = $this->formVal->getFields();
+
+        $username = $fields['sName'] . "" . substr($fields['fName'], 1);
+
         $table = 'members';
         $columns = array (
-            "memberID"  => "",
             "uName"     => $username,
-            "email"     => $email,
-            "fName"     => $firstname,
-            "sName"     => $surname,
-            "telephone" => $telephone
+            "email"     => $fields['email'],
+            "fName"     => $fields['fName'],
+            "sName"     => $fields['sName'],
+            "telephone" => $fields['telephone']
         );
+
         $result = $this->link->insert($table, $columns);
         if ($result) {
-            return true;
+            $this->redirect();
         } else {
-            return false;
+            $this->getErrors();
         }
 
     }
-    
-    
+
     /**
-     * 
+     *
      */
     private function _updateMember()
     {
+        $this->formVal->setMethod('POST');
+        $this->formVal->registerFields();
 
-        // TO DO
-        
+        $this->formVal->validate('memberID')->clean()->isRequired();
+        $this->formVal->validate('telephone')->clean()->isRequired();
+        $this->formVal->validate('fName')->clean()->isRequired();
+        $this->formVal->validate('sName')->clean()->isRequired();
+        $this->formVal->validate('email')->clean()->isRequired()->isEmail();
+
+        $fields = $this->formVal->getFields();
+
+        $username = $fields['sName'] . "" . substr($fields['fName'], 1);
+
+        $table = 'members';
+        $columns = array (
+            "uName"     => $username,
+            "email"     => $fields['email'],
+            "fName"     => $fields['fName'],
+            "sName"     => $fields['sName'],
+            "telephone" => $fields['telephone']
+        );
+
+        $id = $fields['memberID'];
+
+        $where = "memberID = '$id'";
+        $result = $this->link->update($table, $columns, $where);
+        if ($result) {
+            $this->redirect();
+        } else {
+            $this->errors = $this->formVal->getErrors();
+        }
     }
-    
-    
+
     /**
      * 
      */
     private function _deleteMember()
     {
+        $id = FILTER_INPUT(INPUT_GET, 'memberID',  FILTER_SANITIZE_STRING );
+        $table = 'members';
+        $where = "memberID = '$id'";
 
-        // TO DO
-        
+        $result = $this->link->delete($table, $where);
+        if ($result) {
+            $this->redirect();
+        } else {
+            $this->getErrors();
+        }
     }
-    
-
-    
 }
