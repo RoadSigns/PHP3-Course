@@ -17,7 +17,7 @@
     </thead>
     
     <?php if($allMembers){ ?>
-    <?php foreach($allMembers as $member){ //dumpr($member); ?>
+    <?php foreach($allMembers as $member){?>
     <tr>
         <td>
             <?php if($member->profileImagePath != ''){ ?>

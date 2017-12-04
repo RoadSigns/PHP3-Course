@@ -29,8 +29,8 @@
      * ---------------------------------------------------------
      * Errors : $errors
      */
-    $link =  new MyPDO();
-    $validate = new FormValidator();
+    $link       = new MyPDO();
+    $validate   = new FormValidator();
 
     $members = new Members($link, $validate);
 
@@ -45,7 +45,7 @@
      * Segment 1 : $action
      * Segment 2 : $option
      */
-    $url = new Url('/webstudent/sem6zl/php3/members/');
+    $url = new Url('/webstudent/sem6zl/members/');
     $action = $url->getSegment(1);
     $option = $url->getSegment(2);
 

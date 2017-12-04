@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author  Chris Maggs <MaggsC1@cardiff.ac.uk>
  * @date    September 2017
@@ -10,6 +9,7 @@
  * @requires    FileUpload
  * 
  */
+
 class Members {
 
     private $errors = array();
@@ -17,8 +17,8 @@ class Members {
     private $link;
     private $formVal;
 
-    private $projectPath = '/webstudent/sem6zl/php3/members/';
-    private $uploadPath  = '/webstudent/sem6zl/php3/members/images';
+    private $projectPath = '/webstudent/sem6zl/members/';
+    private $uploadPath  = '/webstudent/sem6zl/members/images/';
 
     public function __construct($link, $formVal)
     {
@@ -26,10 +26,12 @@ class Members {
         $this->formVal    = $formVal;
 
         if(isset($_POST['frmName']) && $_POST['frmName']=='add'){
+            $this->fileUpload = new FileUpload('upload');
             $this->_addMember();
         }
 
         if(isset($_POST['frmName']) && $_POST['frmName']=='edit'){
+            $this->fileUpload = new FileUpload('upload');
             $this->_updateMember();
         }
 
@@ -56,8 +58,15 @@ class Members {
         $sql  = "SELECT * FROM members";
             
         $result = $this->link->query($sql)->fetchAll();
+
         if ($result) {
-            return $result;
+            require('Member.php');
+
+            foreach ($result as $member){
+                $members[] = new Member($member);
+            }
+
+            return $members;
         } else {
             return $this->link->getError();
         }
@@ -74,6 +83,7 @@ class Members {
         $sql = " SELECT * FROM members WHERE memberid = :id";
         
         $result = $this->link->query($sql)->bind(':id', $memberID)->fetchRow();
+
         if ($result) {
             return $result;
         } else {
@@ -116,6 +126,12 @@ class Members {
             "telephone" => $fields['telephone']
         );
 
+        if ($_FILES['upload']['name'] != '') {
+            $thumbnailInformation = $this->_uploadImage();
+            $profileImage = $thumbnailInformation['filename'];
+            $columns["profileImage"] = $profileImage;
+        }
+
         $result = $this->link->insert($table, $columns);
         if ($result) {
             $this->redirect();
@@ -144,6 +160,7 @@ class Members {
         $username = $fields['sName'] . "" . substr($fields['fName'], 1);
 
         $table = 'members';
+
         $columns = array (
             "uName"     => $username,
             "email"     => $fields['email'],
@@ -151,6 +168,12 @@ class Members {
             "sName"     => $fields['sName'],
             "telephone" => $fields['telephone']
         );
+
+        if ($_FILES['upload']['name'] != '') {
+            $thumbnailInformation = $this->_uploadImage();
+            $profileImage = $thumbnailInformation['filename'];
+            $columns["profileImage"] = $profileImage;
+        }
 
         $id = $fields['memberID'];
 
@@ -177,6 +200,16 @@ class Members {
             $this->redirect();
         } else {
             $this->getErrors();
+        }
+    }
+
+    private function _uploadImage()
+    {
+        $this->fileUpload->targetPath = $_SERVER['DOCUMENT_ROOT'] ."/webstudent/sem6zl/members/images/";
+        if ($this->fileUpload->validate()) {
+            return $this->fileUpload->process();
+        } else {
+            return $this->fileUpload->getError();
         }
     }
 }
